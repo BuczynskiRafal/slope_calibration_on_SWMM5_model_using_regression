@@ -1,51 +1,40 @@
+import pprint
 from pyswmm import Simulation, Nodes, Links, Link
 from pyswmm.links import Conduit
 
+
+pp = pprint.PrettyPrinter(indent=4)
+
 """
 1. Open SWMM file - done
-2. Get data about slope
-3. Get data about velocity
-4. Get data bout depth
-5. Prepare algorithm to calibration model
+2. Get start nodes of network
+3. Get data about slope
+4. Get data about velocity
+5. Get data bout depth
+6. Prepare algorithm to calibration model
     - validate velocity
     - validate depth
     - check if slope is minimal
     - if not use regression or other algorithm to calibrate slope
-6. Insert new data to model
-7. Execute simulation again
-8. Show result in SWMM
+7. Insert new data to model
+8. Execute simulation again
+9. Show result in SWMM
 """
 
+# 1. Open SWMM file - using the context manager will automatically remove garbage
 with Simulation(inputfile='example.inp') as sim:
-    sim.execute()
-    # print([link.linkid for link in Links(sim)])
-    # for link in Links(sim):
-        # print(link.linkid)
-    link = Links(sim)["3"]
-    print(type(link))
-    # link.flow_limit = 0.5
-    print('\n')
-    # print(f"link.inlet_node: {link.inlet_node}")
-    # print(f"link.outlet_node: {link.outlet_node}")
-    # print(f"link.depth: {link.depth}")
-    # print(f"link.flow: {link.flow}")
-    # print(f"link.connections: {link.connections}")
-    # print(f"link.depth: {link.depth}")
-    # print(f"link.ds_xsection_area: {link.ds_xsection_area}")
-    # print(f"link.flow: {link.flow}")
-    # print(f"link.flow_limit: {link.flow_limit}")
-    # print(f"link.froude: {link.froude}")
-    # print(f"link.initial_flow: {link.initial_flow}")
-    # print(f"link.inlet_head_loss: {link.inlet_head_loss}")
-    # print(f"link.inlet_node: {link.inlet_node}")
-    # print(f"link.inlet_offset: {link.inlet_offset}")
-    # print(f"link.is_orifice: {link.is_orifice()}")
-    # print(f"link.is_outlet: {link.is_outlet()}")
-    # print(f"link.is_conduit: {link.is_conduit()}")
-    # print(f"link.linkid: {link.linkid}")
-    # print(f"link.outlet_head_loss: {link.outlet_head_loss}")
-    # print(f"link.target_setting: {link.target_setting}")
-    print(f"link.conduit_statistics: {link.conduit_statistics}")
+    link = Links(sim)["C3"]
 
-    # stats = Conduit()
-    # print(f"stats: {stats}")
+    print("\n\n\nConduits\n")
+    # link = Links(sim)["C2"]
+
+    sim.step_advance(300)
+    for ind, step in enumerate(sim):
+        pp.pprint(link.conduit_statistics)
+
+    # 1. Get data about slope
+    # 1.1. Get data about connectors levels
+
+    # 1.2. Calculate slope
+    # 1.3. Validate slope
+    # 1.4. If not minimal insert calculate new connectors levels and insert to model.
